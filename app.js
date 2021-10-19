@@ -1,6 +1,6 @@
 // Importaciones necesarias
-const usuarios = require('./routes/usuario');
-const cursos = require('./routes/curso');
+const usuarios = require('./routes/usuarios');
+const cursos = require('./routes/cursos');
 const express = require('express');
 const mongoose = require('mongoose');
 
