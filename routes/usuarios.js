@@ -1,9 +1,26 @@
 // Importaciones necesarias
 const express = require('express');
 const Usuario = require('../models/usuario_model');
+const Joi = require('joi');
 
 // Creamos la ruta.
 const ruta = express.Router();
+
+
+////////// SCHEMA DE VALIDACIÓN CON JOI //////////
+
+const schema = Joi.object({
+    nombre: Joi.string()
+        .min(3)
+        .max(50)
+        .required(),
+
+    password: Joi.string()
+        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+
+    email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ar'] } })
+})
 
 
 ////////// PETICIÓN GET //////////
@@ -16,7 +33,7 @@ ruta.get('/', (req, res) => {
         res.json(users);
     }).catch(err => {
         res.status(400).json({
-            error: err
+            err
         });
     });
 });
@@ -27,18 +44,27 @@ ruta.get('/', (req, res) => {
 ruta.post('/', (req, res) => {
     // Definimos el body.
     let body = req.body;
-    // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
-    let resultado = crearUsuario(body);
-    // Manejamos la promesa.
-    resultado.then(user => {
-        res.json({
-            valor: user
+    // Validamos el nombre y el email con Joi de la siguiente manera.
+    const {error, value} = schema.validate({nombre: body.nombre, email: body.email});
+    if(!error) {
+        // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
+        let resultado = crearUsuario(body);
+        // Manejamos la promesa.
+        resultado.then(user => {
+            res.json({
+                valor: user
+            });
+        }).catch(err => {
+            res.status(400).json({
+                err
+            });
         });
-    }).catch(err => {
+    } else {
         res.status(400).json({
-            error: err
+            error
         });
-    });
+    }
+    
 });
 
 
@@ -46,18 +72,26 @@ ruta.post('/', (req, res) => {
 
 // Actualizamos a través del email del usuario.
 ruta.put('/:email', (req, res) => {
-    // Resultado. Será una promesa porque utiliza la función asíncrona actualizarUsuario().
-    let resultado = actualizarUsuario(req.params.email, req.body);
-    // Manejamos la promesa.
-    resultado.then(user => {
-        res.json({
-            valor: user
+    // Validamos el nombre con Joi de la siguiente manera.
+    const {error, value} = schema.validate({nombre: req.body.nombre});
+    if(!error) {
+        // Resultado. Será una promesa porque utiliza la función asíncrona actualizarUsuario().
+        let resultado = actualizarUsuario(req.params.email, req.body);
+        // Manejamos la promesa.
+        resultado.then(user => {
+            res.json({
+                valor: user
+            });
+        }).catch(err => {
+            res.status(400).json({
+                err
+            });
         });
-    }).catch(err => {
+    } else {
         res.status(400).json({
-            error: err
+            error
         });
-    });
+    }
 });
 
 
@@ -110,7 +144,7 @@ async function listarUsuariosActivos() {
 async function actualizarUsuario(email, body) {
     // Creamos una instancia de Usuario, en la cual se selecciona el documento de la BD por el mail y se realiza la actualización, todo al mismo tiempo con el método findOneAndUpdate(). Le pasamos como condición que se actualice por el email, y actualizamos con el parámetro set.
     // Luego nos retorna el documento actualizado con {new: true}.
-    let usuario = await Usuario.findOneAndUpdate(email, {
+    let usuario = await Usuario.findOneAndUpdate({"email": email}, {
         $set: {
             nombre      : body.nombre,
             password    : body.password
@@ -124,7 +158,7 @@ async function actualizarUsuario(email, body) {
 async function desactivarUsuario(email) {
     // Creamos una instancia de Usuario, en la cual se selecciona el documento de la BD por el mail y se realiza la desactivación, todo al mismo tiempo con el método findOneAndUpdate(). Le pasamos como condición que se desactive por el email, y actualizamos con el parámetro set.
     // Luego nos retorna el documento actualizado (o sea, desactivado) con {new: true}.
-    let usuario = await Usuario.findOneAndUpdate(email, {
+    let usuario = await Usuario.findOneAndUpdate({"email": email}, {
         $set: {
             estado: false
         }
