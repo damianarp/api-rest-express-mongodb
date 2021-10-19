@@ -9,7 +9,16 @@ const ruta = express.Router();
 ////////// PETICIÓN GET //////////
 
 ruta.get('/', (req, res) => {
-    res.json('Listo el GET de usuarios.');
+    // Resultado. Será una promesa porque utiliza la función asíncrona listarUsuariosActivos().
+    let resultado = listarUsuariosActivos();
+    // Manejamos la promesa.
+    resultado.then(users => {
+        res.json(users);
+    }).catch(err => {
+        res.status(400).json({
+            error: err
+        });
+    });
 });
 
 
@@ -34,6 +43,7 @@ ruta.post('/', (req, res) => {
 
 
 ////////// PETICIÓN PUT //////////
+
 // Actualizamos a través del email del usuario.
 ruta.put('/:email', (req, res) => {
     // Resultado. Será una promesa porque utiliza la función asíncrona actualizarUsuario().
@@ -50,6 +60,27 @@ ruta.put('/:email', (req, res) => {
     });
 });
 
+
+////////// PETICIÓN DELETE //////////
+
+// Eliminamos a través del email del usuario.
+// En realidad lo que hacemos es un cambio de estado de true a false.
+ruta.delete('/:email', (req, res) => {
+    // Resultado. Será una promesa porque utiliza la función asíncrona desactivarUsuario().
+    let resultado = desactivarUsuario(req.params.email);
+    // Manejamos la promesa.
+    resultado.then(user => {
+        res.json({
+            valor: user
+        });
+    }).catch(err => {
+        res.status(400).json({
+            error: err
+        });
+    });
+});
+
+
 ////////// MÉTODOS //////////
 
 // Método crearUsuario().
@@ -65,6 +96,15 @@ async function crearUsuario(body) {
     return await usuario.save();
 };
 
+// Método listarUsuariosActivos().
+// Función asíncrona para listar los usuarios activos (estado: true) en la BD.
+async function listarUsuariosActivos() {
+    // Creamos una instancia de Usuario, en la cual se selecciona el documento de la BD por la condición (estado: true).
+    // Luego retornamos la lista de usuarios activos.
+    let usuarios = await Usuario.find({"estado": true});
+    return usuarios;
+}
+
 // Método actualizarUsuario().
 // Función asíncrona para actualizar la información de un usuario en la BD. Recibe el 'email' y el 'body' como parámetro del cliente.
 async function actualizarUsuario(email, body) {
@@ -78,6 +118,20 @@ async function actualizarUsuario(email, body) {
     }, {new: true});
     return usuario;
 }
+
+// Método desactivarUsuario().
+// Función asíncrona para desactivar la información de un usuario en la BD. Recibe el 'email' como parámetro del cliente.
+async function desactivarUsuario(email) {
+    // Creamos una instancia de Usuario, en la cual se selecciona el documento de la BD por el mail y se realiza la desactivación, todo al mismo tiempo con el método findOneAndUpdate(). Le pasamos como condición que se desactive por el email, y actualizamos con el parámetro set.
+    // Luego nos retorna el documento actualizado (o sea, desactivado) con {new: true}.
+    let usuario = await Usuario.findOneAndUpdate(email, {
+        $set: {
+            estado: false
+        }
+    }, {new: true});
+    return usuario;
+}
+
 
 // Exportamos el módulo
 module.exports = ruta;
