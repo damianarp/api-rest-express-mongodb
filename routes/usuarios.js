@@ -32,9 +32,7 @@ ruta.get('/', (req, res) => {
     resultado.then(users => {
         res.json(users);
     }).catch(err => {
-        res.status(400).json({
-            err
-        });
+        res.status(400).json(err);
     });
 });
 
@@ -51,18 +49,12 @@ ruta.post('/', (req, res) => {
         let resultado = crearUsuario(body);
         // Manejamos la promesa.
         resultado.then(user => {
-            res.json({
-                valor: user
-            });
+            res.json(user);
         }).catch(err => {
-            res.status(400).json({
-                err
-            });
+            res.status(400).json(err);
         });
     } else {
-        res.status(400).json({
-            error
-        });
+        res.status(400).json(error);
     }
     
 });
@@ -79,18 +71,12 @@ ruta.put('/:email', (req, res) => {
         let resultado = actualizarUsuario(req.params.email, req.body);
         // Manejamos la promesa.
         resultado.then(user => {
-            res.json({
-                valor: user
-            });
+            res.json(user);
         }).catch(err => {
-            res.status(400).json({
-                err
-            });
+            res.status(400).json(err);
         });
     } else {
-        res.status(400).json({
-            error
-        });
+        res.status(400).json(error);
     }
 });
 
@@ -104,13 +90,9 @@ ruta.delete('/:email', (req, res) => {
     let resultado = desactivarUsuario(req.params.email);
     // Manejamos la promesa.
     resultado.then(user => {
-        res.json({
-            valor: user
-        });
+        res.json(user);
     }).catch(err => {
-        res.status(400).json({
-            error: err
-        });
+        res.status(400).json(err);
     });
 });
 
@@ -124,7 +106,7 @@ async function crearUsuario(body) {
     let usuario = new Usuario({
         email       : body.email,
         nombre      : body.nombre,
-        password    : body.password
+        password    : body.password,
     });
     // Guardamos el usuario creado en la BD, queda en espera.
     return await usuario.save();
