@@ -124,7 +124,7 @@ async function crearUsuario(body) {
     let usuario = new Usuario({
         email       : body.email,
         nombre      : body.nombre,
-        password    : body.password,
+        password    : body.password
     });
     // Guardamos el usuario creado en la BD, queda en espera.
     return await usuario.save();
