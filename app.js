@@ -11,6 +11,9 @@ mongoose.connect('mongodb://localhost:27017/demo')
     .then(() => console.log('Conectado a MongoDB.'))
     .catch(err => console.log('No se pudo conectar con MongoDB.', err));
 
+// En Robo 3T cremos un indice de la colección usuarios de la siguiente manera para poder indexar por el email.
+// db.usuarios.createIndex({"email":1}); // 1 significa 'ascendente'.
+
 
 ////////// CONFIGURACIÓN DE EXPRESS //////////
 
