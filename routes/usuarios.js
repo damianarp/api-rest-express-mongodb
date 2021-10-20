@@ -20,7 +20,7 @@ const schema = Joi.object({
 
     email: Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'ar'] } })
-})
+});
 
 
 ////////// PETICIÓN GET //////////
@@ -40,13 +40,11 @@ ruta.get('/', (req, res) => {
 ////////// PETICIÓN POST //////////
 
 ruta.post('/', (req, res) => {
-    // Definimos el body.
-    let body = req.body;
     // Validamos el nombre y el email con Joi de la siguiente manera.
-    const {error, value} = schema.validate({nombre: body.nombre, email: body.email});
+    const {error, value} = schema.validate({nombre: req.body.nombre, email: req.body.email});
     if(!error) {
         // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
-        let resultado = crearUsuario(body);
+        let resultado = crearUsuario(req.body);
         // Manejamos la promesa.
         resultado.then(user => {
             res.json(user);
@@ -56,7 +54,6 @@ ruta.post('/', (req, res) => {
     } else {
         res.status(400).json(error);
     }
-    
 });
 
 

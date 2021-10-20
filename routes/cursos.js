@@ -1,9 +1,20 @@
 // Importaciones necesarias
 const express = require('express');
 const Curso = require('../models/curso_model');
+const Joi = require('joi');
 
 // Creamos la ruta.
 const ruta = express.Router();
+
+
+////////// SCHEMA DE VALIDACIÓN CON JOI //////////
+
+const schema = Joi.object({
+    titulo: Joi.string()
+        .min(3)
+        .max(100)
+        .required()
+});
 
 
 ////////// PETICIÓN GET //////////
@@ -23,14 +34,20 @@ ruta.get('/', (req, res) => {
 ////////// PETICIÓN POST //////////
 
 ruta.post('/', (req, res) => {
-    // Resultado. Será una promesa porque utiliza la función asíncrona crearCurso().
-    let resultado = crearCurso(req.body);
-    // Manejamos la promesa.
-    resultado.then(curso => {
-        res.json(curso);
-    }).catch(err => {
-        res.status(400).json(err);
-    });
+    // Validamos el titulo con Joi de la siguiente manera.
+    const {error, value} = schema.validate({titulo: req.body.titulo});
+    if(!error) {
+        // Resultado. Será una promesa porque utiliza la función asíncrona crearCurso().
+        let resultado = crearCurso(req.body);
+        // Manejamos la promesa.
+        resultado.then(curso => {
+            res.json(curso);
+        }).catch(err => {
+            res.status(400).json(err);
+        });
+    } else {
+        res.status(400).json(error);
+    }
 });
 
 
@@ -38,14 +55,20 @@ ruta.post('/', (req, res) => {
 
 // Actualizamos a través del id del curso.
 ruta.put('/:id', (req, res) => {
-    // Resultado. Será una promesa porque utiliza la función asíncrona actualizarCurso().
-    let resultado = actualizarCurso(req.params.id, req.body);
-    // Manejamos la promesa.
-    resultado.then(curso => {
-        res.json(curso);
-    }).catch(err => {
-        res.status(400).json(err);
-    });
+    // Validamos el titulo con Joi de la siguiente manera.
+    const {error, value} = schema.validate({titulo: req.body.titulo});
+    if(!error) {
+        // Resultado. Será una promesa porque utiliza la función asíncrona actualizarCurso().
+        let resultado = actualizarCurso(req.params.id, req.body);
+        // Manejamos la promesa.
+        resultado.then(curso => {
+            res.json(curso);
+        }).catch(err => {
+            res.status(400).json(err);
+        });
+    } else {
+        res.status(400).json(error);
+    }
 });
 
 
