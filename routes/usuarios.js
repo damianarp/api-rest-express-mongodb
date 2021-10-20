@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
 const Joi = require('joi');
 
-
 // Creamos la ruta.
 const ruta = express.Router();
 

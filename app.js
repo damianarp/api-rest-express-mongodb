@@ -1,6 +1,7 @@
 // Importaciones necesarias
 const usuarios = require('./routes/usuarios');
 const cursos = require('./routes/cursos');
+const auth = require('./routes/auth');
 const express = require('express');
 const mongoose = require('mongoose');
 
@@ -27,6 +28,7 @@ app.use(express.urlencoded({extended: true}));
 // Llamamos a las rutas.
 app.use('/api/usuarios', usuarios);
 app.use('/api/cursos', cursos);
+app.use('/api/auth', auth);
 
 
 ////////// CONFIGURACIÓN DEL PUERTO DE EXPRESS //////////
