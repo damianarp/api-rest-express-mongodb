@@ -16,7 +16,17 @@ ruta.post('/', (req, res) => {
         .then(datos => {
             // Si existen datos.
             if(datos) {
-                res.json(datos);
+                // Creamos una variable para poder comprobar si la contraseña coincide con la de la BD, comparándola con datos.password.
+                const passwordValido = bcrypt.compareSync(req.body.password, datos.password);
+                // Validamos el password.
+                if(!passwordValido) {
+                    res.status(400).json({
+                        error: 'Ok',
+                        msj: 'Usuario o contraseña incorrecta.'
+                    });
+                } else {
+                    res.json(datos);
+                }
             } else {
                 // Si no hay datos.
                 res.status(400).json({
