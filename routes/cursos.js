@@ -42,6 +42,22 @@ ruta.put('/:id', (req, res) => {
 });
 
 
+////////// PETICIÓN DELETE //////////
+
+// Eliminamos a través del id del curso.
+// En realidad lo que hacemos es un cambio de estado de true a false.
+ruta.delete('/:id', (req, res) => {
+    // Resultado. Será una promesa porque utiliza la función asíncrona desactivarCurso().
+    let resultado = desactivarCurso(req.params.id);
+    // Manejamos la promesa.
+    resultado.then(curso => {
+        res.json(curso);
+    }).catch(err => {
+        res.status(400).json(err);
+    });
+});
+
+
 ////////// MÉTODOS //////////
 
 // Método crearCurso().
@@ -57,14 +73,27 @@ async function crearCurso(body) {
 };
 
 // Método actualizarCurso().
-// Función asíncrona para actualizar la información de un curso en la BD. Recibe el 'email' y el 'body' como parámetro del cliente.
+// Función asíncrona para actualizar la información de un curso en la BD. Recibe el 'id' y el 'body' como parámetro del cliente.
 async function actualizarCurso(id, body) {
-    // Creamos una instancia de Curso, en la cual se selecciona el documento de la BD por el mail y se realiza la actualización, todo al mismo tiempo con el método findOneAndUpdate(). Le pasamos como condición que se actualice por el email, y actualizamos con el parámetro set.
+    // Creamos una instancia de Curso, en la cual se selecciona el documento de la BD por el id y se realiza la actualización, todo al mismo tiempo con el método findByIdAndUpdate(). Le pasamos como condición que se actualice por el id, y actualizamos con el parámetro set.
     // Luego nos retorna el documento actualizado con {new: true}.
     let curso = await Curso.findByIdAndUpdate(id, {
         $set: {
             titulo      : body.titulo,
             descripcion : body.desc
+        }
+    }, {new: true});
+    return curso;
+}
+
+// Método desactivarCurso().
+// Función asíncrona para desactivar la información de un curso en la BD. Recibe el 'id' como parámetro del cliente.
+async function desactivarCurso(id) {
+    // Creamos una instancia de Curso, en la cual se selecciona el documento de la BD por el id y se realiza la desactivación, todo al mismo tiempo con el método findByIdAndUpdate(). Le pasamos como condición que se desactive por el id, y actualizamos con el parámetro set.
+    // Luego nos retorna el documento actualizado (o sea, desactivado) con {new: true}.
+    let curso = await Curso.findByIdAndUpdate(id, {
+        $set: {
+            estado: false
         }
     }, {new: true});
     return curso;
