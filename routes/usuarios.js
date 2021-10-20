@@ -40,23 +40,38 @@ ruta.get('/', (req, res) => {
 ////////// PETICIÓN POST //////////
 
 ruta.post('/', (req, res) => {
-    // Validamos el nombre y el email con Joi de la siguiente manera.
-    const {error, value} = schema.validate({nombre: req.body.nombre, email: req.body.email});
-    if(!error) {
-        // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
-        let resultado = crearUsuario(req.body);
-        // Manejamos la promesa.
-        resultado.then(value => {
-            res.json({
-                nombre  : value.nombre,
-                email   : value.email
+    // Corroboramos que el usuario no se encuentre ya en la BD, con el método findOne(), el cual retorna un callback (que devuelve un error o el usuario que va a traer de la colección) por lo que hay que manejarla por si ocurre un error.
+    Usuario.findOne({email: req.body.email}, (err, user) => {
+        if(err) {
+            // Si ocurre un error.
+            return res.status(400).json({error: 'Server error'});
+        }
+        if(user) {
+            // Si el usuario existe.
+            return res.status(400).json({
+                msj: 'El usuario ya existe.'
             });
-        }).catch(err => {
-            res.status(400).json(err);
-        });
-    } else {
-        res.status(400).json(error);
-    }
+        } else {
+            // Si el usuario no existe.
+            // Validamos el nombre y el email con Joi de la siguiente manera.
+            const {error, value} = schema.validate({nombre: req.body.nombre, email: req.body.email});
+            if(!error) {
+                // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
+                let resultado = crearUsuario(req.body);
+                // Manejamos la promesa.
+                resultado.then(value => {
+                    res.json({
+                        nombre  : value.nombre,
+                        email   : value.email
+                    });
+                }).catch(err => {
+                    res.status(400).json(err);
+                });
+            } else {
+                res.status(400).json(error);
+            }
+        }
+    });
 });
 
 
