@@ -1,7 +1,9 @@
 // Importaciones necesarias
 const express = require('express');
+const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
 const Joi = require('joi');
+
 
 // Creamos la ruta.
 const ruta = express.Router();
@@ -127,7 +129,7 @@ async function crearUsuario(body) {
     let usuario = new Usuario({
         email       : body.email,
         nombre      : body.nombre,
-        password    : body.password,
+        password    : bcrypt.hashSync(body.password, 10) // Encriptamos el password con el módulo bcrypt.
     });
     // Guardamos el usuario creado en la BD, queda en espera.
     return await usuario.save();
