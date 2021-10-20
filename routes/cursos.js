@@ -9,7 +9,14 @@ const ruta = express.Router();
 ////////// PETICIÓN GET //////////
 
 ruta.get('/', (req, res) => {
-    res.json('Listo el GET de cursos.');
+    // Resultado. Será una promesa porque utiliza la función asíncrona listarCursosActivos().
+    let resultado = listarCursosActivos();
+    // Manejamos la promesa.
+    resultado.then(cursos => {
+        res.json(cursos);
+    }).catch(err => {
+        res.status(400).json(err);
+    });
 });
 
 
@@ -71,6 +78,15 @@ async function crearCurso(body) {
     // Guardamos el curso creado en la BD, queda en espera.
     return await curso.save();
 };
+
+// Método listarCursosActivos().
+// Función asíncrona para listar los cursos activos (estado: true) en la BD.
+async function listarCursosActivos() {
+    // Creamos una instancia de Curso, en la cual se selecciona el documento de la BD por la condición (estado: true).
+    // Luego retornamos la lista de cursos activos.
+    let cursos = await Curso.find({"estado": true});
+    return cursos;
+}
 
 // Método actualizarCurso().
 // Función asíncrona para actualizar la información de un curso en la BD. Recibe el 'id' y el 'body' como parámetro del cliente.
