@@ -40,8 +40,8 @@ ruta.post('/', (req, res) => {
         // Resultado. Será una promesa porque utiliza la función asíncrona crearCurso().
         let resultado = crearCurso(req.body);
         // Manejamos la promesa.
-        resultado.then(curso => {
-            res.json(curso);
+        resultado.then(value => {
+            res.json(value);
         }).catch(err => {
             res.status(400).json(err);
         });
@@ -61,8 +61,8 @@ ruta.put('/:id', (req, res) => {
         // Resultado. Será una promesa porque utiliza la función asíncrona actualizarCurso().
         let resultado = actualizarCurso(req.params.id, req.body);
         // Manejamos la promesa.
-        resultado.then(curso => {
-            res.json(curso);
+        resultado.then(value => {
+            res.json(value);
         }).catch(err => {
             res.status(400).json(err);
         });

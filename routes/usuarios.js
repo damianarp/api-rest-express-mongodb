@@ -46,8 +46,11 @@ ruta.post('/', (req, res) => {
         // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
         let resultado = crearUsuario(req.body);
         // Manejamos la promesa.
-        resultado.then(user => {
-            res.json(user);
+        resultado.then(value => {
+            res.json({
+                nombre  : value.nombre,
+                email   : value.email
+            });
         }).catch(err => {
             res.status(400).json(err);
         });
@@ -67,8 +70,11 @@ ruta.put('/:email', (req, res) => {
         // Resultado. Será una promesa porque utiliza la función asíncrona actualizarUsuario().
         let resultado = actualizarUsuario(req.params.email, req.body);
         // Manejamos la promesa.
-        resultado.then(user => {
-            res.json(user);
+        resultado.then(value => {
+            res.json({
+                nombre  : value.nombre,
+                email   : value.email
+            });
         }).catch(err => {
             res.status(400).json(err);
         });
@@ -86,8 +92,11 @@ ruta.delete('/:email', (req, res) => {
     // Resultado. Será una promesa porque utiliza la función asíncrona desactivarUsuario().
     let resultado = desactivarUsuario(req.params.email);
     // Manejamos la promesa.
-    resultado.then(user => {
-        res.json(user);
+    resultado.then(value => {
+        res.json({
+            nombre  : value.nombre,
+            email   : value.email
+        });
     }).catch(err => {
         res.status(400).json(err);
     });
@@ -113,8 +122,9 @@ async function crearUsuario(body) {
 // Función asíncrona para listar los usuarios activos (estado: true) en la BD.
 async function listarUsuariosActivos() {
     // Creamos una instancia de Usuario, en la cual se selecciona el documento de la BD por la condición (estado: true).
-    // Luego retornamos la lista de usuarios activos.
-    let usuarios = await Usuario.find({"estado": true});
+    // Luego retornamos la lista de usuarios activos, mostrando sólo el nombre y el email en orden ascendente.
+    let usuarios = await Usuario.find({"estado": true})
+    .select({nombre:1, email:1}); 
     return usuarios;
 }
 
