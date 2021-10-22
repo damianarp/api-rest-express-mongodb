@@ -1,5 +1,6 @@
 // Importaciones necesarias
 const usuarios = require('./routes/usuarios');
+const config = require('config');
 const cursos = require('./routes/cursos');
 const auth = require('./routes/auth');
 const express = require('express');
@@ -8,7 +9,8 @@ const mongoose = require('mongoose');
 
 ////////// CONEXIÓN A MONGODB //////////
 
-mongoose.connect('mongodb://localhost:27017/demo')
+// Conectamos con mongoose a través del módulo config.
+mongoose.connect(config.get('configDB.HOST'))
     .then(() => console.log('Conectado a MongoDB.'))
     .catch(err => console.log('No se pudo conectar con MongoDB.', err));
 

@@ -1,0 +1,10 @@
+{
+    "nombre": "Api RESTful Express - Usuarios y Cursos",
+    "configDB": {
+        "HOST": "mongodb://localhost:27017/demo"
+    },
+    "configToken": {
+        "SEED": "secret",
+        "expiration": "24h"
+    }
+}
