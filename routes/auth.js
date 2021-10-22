@@ -26,10 +26,22 @@ ruta.post('/', (req, res) => {
                         msj: 'Usuario o contraseña incorrecta.'
                     });
                 } else {
-                    // Generamos el token con jwt y le pasamos los datos. Luego usamos una contraseña (por defectousamos 'password')
-                    const jwToken = jwt.sign({_id: datos._id}, {nombre: datos.nombre}, {email: datos.email}, 'password');
-                    // Enviamos el token
-                    res.send(jwToken);
+                    // Generamos el token con jwt y le pasamos los datos en el payload. Usamos por defecto la contraseña 'secret' y le pasamos el tiempo de expiración (24 horas).
+                    const jwToken = jwt.sign({
+                                    data: {_id: datos._id, nombre: datos.nombre, email: datos.email}
+                                }, 'secret', { expiresIn: '24h' });
+                    // Enviamos el token con los datos del payload.
+                    res.json({
+                        usuario: {
+                            _id: datos._id,
+                            nombre: datos.nombre,
+                            email: datos.email
+                        }, 
+                        jwToken
+                    });
+                    // Otra forma de hacerlo es:
+                    // Generamos el token con jwt y le pasamos los datos. Luego usamos una contraseña (por defecto usamos 'password').
+                    //const jwToken = jwt.sign({_id: datos._id, nombre: datos.nombre, email: datos.email}, 'password');
                 }
             } else {
                 // Si no hay datos.
