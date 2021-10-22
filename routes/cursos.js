@@ -34,7 +34,7 @@ ruta.get('/', verificarToken, (req, res) => {
 
 ////////// PETICIÓN POST //////////
 
-ruta.post('/', (req, res) => {
+ruta.post('/', verificarToken, (req, res) => {
     // Validamos el titulo con Joi de la siguiente manera.
     const {error, value} = schema.validate({titulo: req.body.titulo});
     if(!error) {
@@ -55,7 +55,7 @@ ruta.post('/', (req, res) => {
 ////////// PETICIÓN PUT //////////
 
 // Actualizamos a través del id del curso.
-ruta.put('/:id', (req, res) => {
+ruta.put('/:id', verificarToken, (req, res) => {
     // Validamos el titulo con Joi de la siguiente manera.
     const {error, value} = schema.validate({titulo: req.body.titulo});
     if(!error) {
@@ -77,7 +77,7 @@ ruta.put('/:id', (req, res) => {
 
 // Eliminamos a través del id del curso.
 // En realidad lo que hacemos es un cambio de estado de true a false.
-ruta.delete('/:id', (req, res) => {
+ruta.delete('/:id', verificarToken, (req, res) => {
     // Resultado. Será una promesa porque utiliza la función asíncrona desactivarCurso().
     let resultado = desactivarCurso(req.params.id);
     // Manejamos la promesa.

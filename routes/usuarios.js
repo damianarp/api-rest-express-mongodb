@@ -80,7 +80,7 @@ ruta.post('/', (req, res) => {
 ////////// PETICIÓN PUT //////////
 
 // Actualizamos a través del email del usuario.
-ruta.put('/:email', (req, res) => {
+ruta.put('/:email', verificarToken, (req, res) => {
     // Validamos el nombre con Joi de la siguiente manera.
     const {error, value} = schema.validate({nombre: req.body.nombre});
     if(!error) {
@@ -105,7 +105,7 @@ ruta.put('/:email', (req, res) => {
 
 // Eliminamos a través del email del usuario.
 // En realidad lo que hacemos es un cambio de estado de true a false.
-ruta.delete('/:email', (req, res) => {
+ruta.delete('/:email', verificarToken, (req, res) => {
     // Resultado. Será una promesa porque utiliza la función asíncrona desactivarUsuario().
     let resultado = desactivarUsuario(req.params.email);
     // Manejamos la promesa.
