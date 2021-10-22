@@ -2,6 +2,7 @@
 const express = require('express');
 const Curso = require('../models/curso_model');
 const Joi = require('joi');
+const verificarToken = require('../middlewares/auth');
 
 // Creamos la ruta.
 const ruta = express.Router();
@@ -19,7 +20,7 @@ const schema = Joi.object({
 
 ////////// PETICIÓN GET //////////
 
-ruta.get('/', (req, res) => {
+ruta.get('/', verificarToken, (req, res) => {
     // Resultado. Será una promesa porque utiliza la función asíncrona listarCursosActivos().
     let resultado = listarCursosActivos();
     // Manejamos la promesa.
