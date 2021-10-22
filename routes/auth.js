@@ -1,5 +1,6 @@
 // Importaciones necesarias
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario_model');
 //const Joi = require('joi');
@@ -25,7 +26,10 @@ ruta.post('/', (req, res) => {
                         msj: 'Usuario o contraseña incorrecta.'
                     });
                 } else {
-                    res.json(datos);
+                    // Generamos el token con jwt y le pasamos los datos. Luego usamos una contraseña (por defectousamos 'password')
+                    const jwToken = jwt.sign({_id: datos._id}, {nombre: datos.nombre}, {email: datos.email}, 'password');
+                    // Enviamos el token
+                    res.send(jwToken);
                 }
             } else {
                 // Si no hay datos.
