@@ -97,7 +97,8 @@ async function crearCurso(req) {
     // Creamos una instancia de Curso.
     let curso = new Curso({
         titulo       : req.body.titulo,
-        autor        : req.usuario._id, // Registro de relación de un nuevo curso con el usuario que lo crea.
+        autor        : req.usuario, // Registro de relación de un nuevo curso con el usuario que lo crea (documento embebido, con autorSchema en curso_model).
+        //autor        : req.usuario._id, // Registro de relación de un nuevo curso con el usuario que lo crea (por referencia, sin autorSchema en curso_model).
         descripcion  : req.body.desc
     });
     // Guardamos el curso creado en la BD, queda en espera.
@@ -111,8 +112,8 @@ async function listarCursosActivos() {
     // Con la función populate() traemos los datos del autor, incluimos sólo el nombre y excluimos el _id, que viene por defecto.
     // Luego retornamos la lista de cursos activos.
     let cursos = await Curso
-        .find({"estado": true})
-        .populate('autor', 'nombre -_id');
+        .find({"estado": true});
+        //.populate('autor', 'nombre -_id'); // Solo para registro por referencia.
     return cursos;
 }
 
