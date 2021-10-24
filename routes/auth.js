@@ -29,7 +29,7 @@ ruta.post('/', (req, res) => {
                 } else {
                     // Generamos el token con jwt y le pasamos los datos en el payload. Como contraseña le pasamos el configToken.SEED definido en el módulo config y como tiempo de expiración el configToken.expiration también del módulo config.
                     const jwToken = jwt.sign({
-                                    data: {_id: datos._id, nombre: datos.nombre, email: datos.email}
+                                    usuario: {_id: datos._id, nombre: datos.nombre, email: datos.email}
                                 }, config.get('configToken.SEED'), { expiresIn: config.get('configToken.expiration') });
                     // Enviamos el token con los datos del payload.
                     res.json({

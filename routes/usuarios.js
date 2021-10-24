@@ -61,10 +61,10 @@ ruta.post('/', (req, res) => {
                 // Resultado. Será una promesa porque utiliza la función asíncrona crearUsuario().
                 let resultado = crearUsuario(req.body);
                 // Manejamos la promesa.
-                resultado.then(value => {
+                resultado.then(user => {
                     res.json({
-                        nombre  : value.nombre,
-                        email   : value.email
+                        nombre  : user.nombre,
+                        email   : user.email
                     });
                 }).catch(err => {
                     res.status(400).json(err);
@@ -87,10 +87,10 @@ ruta.put('/:email', verificarToken, (req, res) => {
         // Resultado. Será una promesa porque utiliza la función asíncrona actualizarUsuario().
         let resultado = actualizarUsuario(req.params.email, req.body);
         // Manejamos la promesa.
-        resultado.then(value => {
+        resultado.then(user => {
             res.json({
-                nombre  : value.nombre,
-                email   : value.email
+                nombre  : user.nombre,
+                email   : user.email
             });
         }).catch(err => {
             res.status(400).json(err);
@@ -109,10 +109,10 @@ ruta.delete('/:email', verificarToken, (req, res) => {
     // Resultado. Será una promesa porque utiliza la función asíncrona desactivarUsuario().
     let resultado = desactivarUsuario(req.params.email);
     // Manejamos la promesa.
-    resultado.then(value => {
+    resultado.then(user => {
         res.json({
-            nombre  : value.nombre,
-            email   : value.email
+            nombre  : user.nombre,
+            email   : user.email
         });
     }).catch(err => {
         res.status(400).json(err);

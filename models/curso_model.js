@@ -1,11 +1,17 @@
 // Importaciones necesarias
 const mongoose = require('mongoose');
 
+// Definimos un schema para poder modelar al autor del curso.
+const Schema = mongoose.Schema;
+
 // Creamos un schema para cursos como instancia de un schema de mongoose.
 const cursoSchema = new mongoose.Schema({
     titulo: {
         type: String,
         required: true
+    },
+    autor: {
+        type: Schema.Types.ObjectId, ref: 'Usuario'
     },
     descripcion: {
         type: String,

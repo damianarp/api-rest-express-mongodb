@@ -39,10 +39,10 @@ ruta.post('/', verificarToken, (req, res) => {
     const {error, value} = schema.validate({titulo: req.body.titulo});
     if(!error) {
         // Resultado. Será una promesa porque utiliza la función asíncrona crearCurso().
-        let resultado = crearCurso(req.body);
+        let resultado = crearCurso(req);
         // Manejamos la promesa.
-        resultado.then(value => {
-            res.json(value);
+        resultado.then(curso => {
+            res.json(curso);
         }).catch(err => {
             res.status(400).json(err);
         });
@@ -62,8 +62,8 @@ ruta.put('/:id', verificarToken, (req, res) => {
         // Resultado. Será una promesa porque utiliza la función asíncrona actualizarCurso().
         let resultado = actualizarCurso(req.params.id, req.body);
         // Manejamos la promesa.
-        resultado.then(value => {
-            res.json(value);
+        resultado.then(curso => {
+            res.json(curso);
         }).catch(err => {
             res.status(400).json(err);
         });
@@ -92,12 +92,13 @@ ruta.delete('/:id', verificarToken, (req, res) => {
 ////////// MÉTODOS //////////
 
 // Método crearCurso().
-// Función asíncrona para guardar la información de un curso en la BD. Recibe el 'body' en el Api REST como parámetro del cliente.
-async function crearCurso(body) {
+// Función asíncrona para guardar la información de un curso en la BD. Recibe el 'req' en el Api REST como parámetro del cliente.
+async function crearCurso(req) {
     // Creamos una instancia de Curso.
     let curso = new Curso({
-        titulo       : body.titulo,
-        descripcion  : body.desc
+        titulo       : req.body.titulo,
+        autor        : req.usuario._id, // Registro de relación de un nuevo curso con el usuario que lo crea.
+        descripcion  : req.body.desc
     });
     // Guardamos el curso creado en la BD, queda en espera.
     return await curso.save();
