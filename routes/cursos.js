@@ -108,8 +108,11 @@ async function crearCurso(req) {
 // Función asíncrona para listar los cursos activos (estado: true) en la BD.
 async function listarCursosActivos() {
     // Creamos una instancia de Curso, en la cual se selecciona el documento de la BD por la condición (estado: true).
+    // Con la función populate() traemos los datos del autor, incluimos sólo el nombre y excluimos el _id, que viene por defecto.
     // Luego retornamos la lista de cursos activos.
-    let cursos = await Curso.find({"estado": true});
+    let cursos = await Curso
+        .find({"estado": true})
+        .populate('autor', 'nombre -_id');
     return cursos;
 }
 
